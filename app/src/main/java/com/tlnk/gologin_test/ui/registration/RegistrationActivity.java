@@ -6,10 +6,13 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -100,10 +103,13 @@ public class RegistrationActivity extends AppCompatActivity {
                     } else {
                         RegistrationModel registrationModel = new RegistrationModel(inputEmail.getText().toString(), inputPassword.getText().toString(), inputConfirmPassword.getText().toString(), "");
                         makeRegistration(registrationModel);
+
                     }
                 } else Toast.makeText(RegistrationActivity.this, "Incorrect email", Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
 
     private void init() {
@@ -127,6 +133,11 @@ public class RegistrationActivity extends AppCompatActivity {
                     Toast.makeText(RegistrationActivity.this, "AAAAA", Toast.LENGTH_SHORT).show();
                     registrationResponse = response.body();
                     Toast.makeText(RegistrationActivity.this, registrationResponse.getToken(), Toast.LENGTH_SHORT).show();
+
+                    SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
+                    sharedPreferences.edit().putString("authToken", registrationResponse.getToken()).apply();
+
+                    Intent intent = new Intent();
                 }
             }
 
