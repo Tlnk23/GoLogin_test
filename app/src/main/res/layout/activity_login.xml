@@ -57,6 +57,7 @@
             android:inputType="textEmailAddress"
             android:hint="@string/email_hint"
             android:textColorHint="@color/grey_light"
+            android:textCursorDrawable="@color/blue_light"
             android:textSize="16sp"
             android:background="@drawable/input_form_default"
             android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@."/>
@@ -71,6 +72,7 @@
             android:textSize="13sp"/>
 
         <FrameLayout
+            android:layout_marginTop="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -78,19 +80,21 @@
                 android:id="@+id/login_input_password"
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
-                android:layout_marginTop="12dp"
                 android:padding="12dp"
                 android:inputType="textPassword"
                 android:hint="@string/password_hint"
                 android:textColorHint="@color/grey_light"
                 android:textSize="16sp"
                 android:background="@drawable/input_form_default"
-                android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"/>
+                android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+                app:passwordToggleEnabled="true"/>
 
-            <ImageView
+            <CheckBox
+                android:id="@+id/login_btn_visible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_visiable"
+                android:button="@drawable/eye_selector"
+                android:layout_gravity="end|center"
                 />
         </FrameLayout>
 

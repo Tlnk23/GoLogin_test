@@ -5,9 +5,10 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by Alexandr Egorshin on 17.03.2021.
  */
-public class RegistrationResponse {
+public class SuccessfulResponse {
+
     @SerializedName("_id")
-    String id;
+    String profile_id;
     @SerializedName("access_token")
     String access_token;
     @SerializedName("refresh_token")
@@ -16,7 +17,7 @@ public class RegistrationResponse {
     String token;
 
     public String getId() {
-        return id;
+        return profile_id;
     }
 
     public String getAccess_token() {

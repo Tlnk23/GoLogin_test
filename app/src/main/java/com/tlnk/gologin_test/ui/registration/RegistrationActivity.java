@@ -4,45 +4,37 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.tlnk.gologin_test.R;
-import com.tlnk.gologin_test.api.ApiFactory;
-import com.tlnk.gologin_test.api.ApiService;
-import com.tlnk.gologin_test.pojo.RegistrationResponse;
+import com.tlnk.gologin_test.pojo.SuccessfulResponse;
 import com.tlnk.gologin_test.ui.login.LoginActivity;
+import com.tlnk.gologin_test.ui.profile.ProfileActivity;
 
-import io.reactivex.Scheduler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class RegistrationActivity extends AppCompatActivity {
 
     private TextInputEditText inputEmail, inputPassword, inputConfirmPassword;
-    private TextView errorText;
+    private TextView errorText, btnGoLogin;
     private AppCompatButton btnSignIn;
+    String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
-    private CompositeDisposable compositeDisposable;
-
-    private RegistrationResponse registrationResponse;
+    private RegistrationViewModel registrationViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,21 +87,52 @@ public class RegistrationActivity extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
                 if(inputEmail.getText().toString().trim().matches(emailPattern)) {
-                    if (inputPassword.getText().toString().equals("") || inputConfirmPassword.getText().toString().equals("")) {
-                        Toast.makeText(RegistrationActivity.this, "error", Toast.LENGTH_SHORT).show();
-                    } else {
-                        RegistrationModel registrationModel = new RegistrationModel(inputEmail.getText().toString(), inputPassword.getText().toString(), inputConfirmPassword.getText().toString(), "");
-                        makeRegistration(registrationModel);
 
+                    if (inputPassword.getText().toString().equals("") || inputConfirmPassword.getText().toString().equals("")) {  //check for empty inputs
+                        Toast.makeText(RegistrationActivity.this, "You must fill in all fields", Toast.LENGTH_SHORT).show();
+                    } else if(inputPassword.getText().toString().equals(inputConfirmPassword.getText().toString())){
+                        RegistrationModel registrationModel = new RegistrationModel(inputEmail.getText().toString(), inputPassword.getText().toString(), inputConfirmPassword.getText().toString(), "aaaa");
+
+                        registrationViewModel.getProfileData().observe(RegistrationActivity.this, new Observer<SuccessfulResponse>() {
+                            @Override
+                            public void onChanged(SuccessfulResponse successfulResponse) {
+                                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
+                                sharedPreferences.edit().putString("authToken", successfulResponse.getToken()).apply();
+
+                                Intent intent = new Intent(RegistrationActivity.this, ProfileActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            }
+                        });
+                        
+                        registrationViewModel.getError().observe(RegistrationActivity.this, new Observer<String>() {
+                            @Override
+                            public void onChanged(String s) {
+                                if (isOnline()){
+                                    Toast.makeText(RegistrationActivity.this, "Error, check fields.", Toast.LENGTH_SHORT).show();
+                                } else {Toast.makeText(RegistrationActivity.this, "Network is not available", Toast.LENGTH_SHORT).show();}
+                            }
+                        });
+                        registrationViewModel.makeRegistration(registrationModel);
+                    } else {
+                        Toast.makeText(RegistrationActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
                     }
-                } else Toast.makeText(RegistrationActivity.this, "Incorrect email", Toast.LENGTH_SHORT).show();
+                } else {
+                    inputEmail.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.input_form_error, null));
+                    errorText.setVisibility(View.VISIBLE);
+                }
             }
         });
 
-
+        btnGoLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void init() {
@@ -118,33 +141,15 @@ public class RegistrationActivity extends AppCompatActivity {
         inputConfirmPassword = findViewById(R.id.registration_input_password_confirm);
         btnSignIn = findViewById(R.id.registration_btn_signUp);
         errorText = findViewById(R.id.registration_error_text);
+        btnGoLogin = findViewById(R.id.registration_btn_logIn);
+
+        registrationViewModel = ViewModelProviders.of(this).get(RegistrationViewModel.class);
     }
 
-    @SuppressLint("CheckResult")
-    private void makeRegistration(RegistrationModel registrationModel) {
-        ApiFactory apiFactory = ApiFactory.getInstance();
-        ApiService apiService = apiFactory.getApiService();
-
-        compositeDisposable = new CompositeDisposable();
-        apiService.accountRegistration(registrationModel).enqueue(new Callback<RegistrationResponse>() {
-            @Override
-            public void onResponse(Call<RegistrationResponse> call, Response<RegistrationResponse> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(RegistrationActivity.this, "AAAAA", Toast.LENGTH_SHORT).show();
-                    registrationResponse = response.body();
-                    Toast.makeText(RegistrationActivity.this, registrationResponse.getToken(), Toast.LENGTH_SHORT).show();
-
-                    SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
-                    sharedPreferences.edit().putString("authToken", registrationResponse.getToken()).apply();
-
-                    Intent intent = new Intent();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RegistrationResponse> call, Throwable t) {
-                Toast.makeText(RegistrationActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }
