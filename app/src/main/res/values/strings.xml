@@ -9,4 +9,11 @@
     <string name="btn_text_registration">Create Account</string>
     <string name="btn_text_signUp">Sign Up</string>
     <string name="invalid_email_text">Please enter a valid email address</string>
+    <string name="toast_click">Сlick again to exit</string>
+    <string name="toast_error_fields">Error, check fields.</string>
+    <string name="toast_error_network">Network is not available</string>
+    <string name="toast_error_password">Passwords do not match</string>
+    <string name="toast_error_bad_login">Wrong email or password!</string>
+    <string name="toast_error_fill_fields">You must fill in all fields</string>
+    <string name="email_pattern">[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+</string>
 </resources>

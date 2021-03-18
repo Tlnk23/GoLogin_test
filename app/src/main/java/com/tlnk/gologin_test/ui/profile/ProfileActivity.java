@@ -73,7 +73,7 @@ public class ProfileActivity extends AppCompatActivity {
         else
         {
             this.backPressedQ++;
-            Toast.makeText(this, "Нажмите ещё раз, чтобы выйти", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.toast_click, Toast.LENGTH_SHORT).show();
         }
 
         final Handler handler = new Handler();

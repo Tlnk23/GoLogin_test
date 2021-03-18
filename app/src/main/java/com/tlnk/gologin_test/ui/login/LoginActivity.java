@@ -108,11 +108,11 @@ public class LoginActivity extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+                String emailPattern = getString(R.string.email_pattern);
 
                 if(inputEmail.getText().toString().trim().matches(emailPattern)) {
                     if (inputEmail.getText().toString().equals("") || inputPassword.getText().toString().equals("")) {
-                        Toast.makeText(LoginActivity.this, "You must fill in all fields", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, R.string.toast_error_fill_fields, Toast.LENGTH_SHORT).show();
                     } else {
                         LoginModel loginModel = new LoginModel(inputEmail.getText().toString(), inputPassword.getText().toString(), true, "");
 
@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                         loginViewModel.getError().observe(LoginActivity.this, new Observer<String>() {
                             @Override
                             public void onChanged(String s) {
-                                Toast.makeText(LoginActivity.this, "Wrong email or password!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, R.string.toast_error_bad_login, Toast.LENGTH_SHORT).show();
                             }
                         });
                         loginViewModel.pushData(loginModel);

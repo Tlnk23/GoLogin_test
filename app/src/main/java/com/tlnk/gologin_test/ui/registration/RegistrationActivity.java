@@ -32,7 +32,6 @@ public class RegistrationActivity extends AppCompatActivity {
     private TextInputEditText inputEmail, inputPassword, inputConfirmPassword;
     private TextView errorText, btnGoLogin;
     private AppCompatButton btnSignIn;
-    String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
     private RegistrationViewModel registrationViewModel;
 
@@ -87,11 +86,11 @@ public class RegistrationActivity extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String emailPattern = getString(R.string.email_pattern);
                 if(inputEmail.getText().toString().trim().matches(emailPattern)) {
 
                     if (inputPassword.getText().toString().equals("") || inputConfirmPassword.getText().toString().equals("")) {  //check for empty inputs
-                        Toast.makeText(RegistrationActivity.this, "You must fill in all fields", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegistrationActivity.this, R.string.toast_error_fill_fields, Toast.LENGTH_SHORT).show();
                     } else if(inputPassword.getText().toString().equals(inputConfirmPassword.getText().toString())){
                         RegistrationModel registrationModel = new RegistrationModel(inputEmail.getText().toString(), inputPassword.getText().toString(), inputConfirmPassword.getText().toString(), "aaaa");
 
@@ -111,13 +110,13 @@ public class RegistrationActivity extends AppCompatActivity {
                             @Override
                             public void onChanged(String s) {
                                 if (isOnline()){
-                                    Toast.makeText(RegistrationActivity.this, "Error, check fields.", Toast.LENGTH_SHORT).show();
-                                } else {Toast.makeText(RegistrationActivity.this, "Network is not available", Toast.LENGTH_SHORT).show();}
+                                    Toast.makeText(RegistrationActivity.this, R.string.toast_error_fields, Toast.LENGTH_SHORT).show();
+                                } else {Toast.makeText(RegistrationActivity.this, R.string.toast_error_network, Toast.LENGTH_SHORT).show();}
                             }
                         });
                         registrationViewModel.makeRegistration(registrationModel);
                     } else {
-                        Toast.makeText(RegistrationActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegistrationActivity.this, R.string.toast_error_password, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     inputEmail.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.input_form_error, null));
