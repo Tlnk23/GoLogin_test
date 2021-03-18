@@ -45,6 +45,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        String code = getIntent().getStringExtra("isClose");
+        if (code != null) {
+            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
+            sharedPreferences.edit().putString("authToken", "").apply();
+        }
+
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
         String authToken = sharedPreferences.getString("authToken", "");
 

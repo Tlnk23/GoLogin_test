@@ -1,5 +1,6 @@
 package com.tlnk.gologin_test.ui.profile;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.tlnk.gologin_test.R;
+import com.tlnk.gologin_test.ui.login.LoginActivity;
 
 import java.util.ArrayList;
 
@@ -63,7 +65,10 @@ public class ProfileActivity extends AppCompatActivity {
     {
         if (this.backPressedQ == 1)
         {
-            System.exit(0);
+//            System.exit(0);
+            Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+            intent.putExtra("isClose", "true");
+            startActivity(intent);
         }
         else
         {
