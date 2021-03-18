@@ -16,5 +16,6 @@
     <color name="input_white">#F2F3F5</color>
     <color name="blue_light">#3F8AE0</color>
     <color name="milky">#F2F3F5</color>
+    <color name="grey_checkbox">#99A2AD</color>
 
 </resources>
