@@ -1,4 +1,4 @@
-# GoLogin_test (Min sdk 19+)
+# GoLogin (Min sdk 19+)
 <b>Stack:</b></br>
   MVVM</br>
   Retrofit</br>
